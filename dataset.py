@@ -35,7 +35,7 @@ class Dataset:
 
             for label, statistics in [('home', home_statistics), ('away', away_statistics)]:
                 for key in statistics.keys():
-                    processed_result[label + '-' + key] = statistics[key]
+                    processed_result[f'{label}-{key}'] = statistics[key]
 
             self.processed_results.append(processed_result)
 
@@ -65,33 +65,28 @@ class Dataset:
                 team_letter, opposition_letter = 'A', 'H'
                 opposition = result['HomeTeam']
 
-            goals = int(result['FT{}G'.format(team_letter)])
-            shots = int(result['{}S'.format(team_letter)])
-            shots_on_target = int(result['{}ST'.format(team_letter)])
+            goals = int(result[f'FT{team_letter}G'])
+            shots = int(result[f'{team_letter}S'])
+            shots_on_target = int(result[f'{team_letter}ST'])
             shot_accuracy = shots_on_target / shots if shots > 0 else 0
 
-            opposition_goals = int(result['FT{}G'.format(opposition_letter)])
-            opposition_shots = int(result['{}S'.format(opposition_letter)])
-            opposition_shots_on_target = int(result['{}ST'.format(opposition_letter)])
+            opposition_goals = int(result[f'FT{opposition_letter}G'])
+            opposition_shots = int(result[f'{opposition_letter}S'])
+            opposition_shots_on_target = int(result[f'{opposition_letter}ST'])
 
             return {
                 'wins': 1 if result['FTR'] == team_letter else 0,
                 'draws': 1 if result['FTR'] == 'D' else 0,
                 'losses': 1 if result['FTR'] == opposition_letter else 0,
-                'goals': int(result['FT{}G'.format(team_letter)]),
-                'opposition-goals': int(result['FT{}G'.format(opposition_letter)]),
-                'shots': int(result['{}S'.format(team_letter)]),
-                'shots-on-target': int(result['{}ST'.format(team_letter)]),
-                'opposition-shots': int(result['{}S'.format(opposition_letter)]),
-                'opposition-shots-on-target': int(result['{}ST'.format(opposition_letter)]),
+                'goals': int(result[f'FT{team_letter}G']),
+                'opposition-goals': int(result[f'FT{opposition_letter}G']),
+                'shots': int(result[f'{team_letter}S']),
+                'shots-on-target': int(result[f'{team_letter}ST']),
+                'opposition-shots': int(result[f'{opposition_letter}S']),
+                'opposition-shots-on-target': int(result[f'{opposition_letter}ST']),
             }
 
         def reduce_fn(x, y):
-            result = {}
-
-            for key in x.keys():
-                result[key] = x[key] + y[key]
-
-            return result
+            return {key: x[key] + y[key] for key in x.keys()}
 
         return reduce(reduce_fn, map(map_fn, recent_results[-matches:]))

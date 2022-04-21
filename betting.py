@@ -4,7 +4,7 @@ def test_betting_stategy(predictions, test_features, test_labels, bet_difference
         'return': 0,
     }
 
-    for i in range(0, len(predictions)):
+    for i in range(len(predictions)):
         probabilities = predictions[i]['probabilities']
 
         if probabilities[1] > (1 / test_features['odds-draw'][i]) + bet_difference:

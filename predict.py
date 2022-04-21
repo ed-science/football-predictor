@@ -24,7 +24,7 @@ def main(argv):
 
                 features[key].append(result[key])
 
-        for key in features.keys():
+        for key in features:
             features[key] = np.array(features[key])
 
         return features, features['result']
